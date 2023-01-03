@@ -1,4 +1,4 @@
-package com.balietek.starterspringboot.models;
+package com.balietek.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
