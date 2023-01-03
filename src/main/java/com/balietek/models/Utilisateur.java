@@ -9,28 +9,38 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
+@Entity(name = "utilisateur")
+@Table(name = "utilisateur")
+public class Utilisateur implements Serializable {
 
-@Entity(name="utilisateur")
-@Table(name="utilisateur")
-public class Utilisateur implements Serializable{
-    
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String fullName;
 
-	@Column(unique = true, nullable = false)
+    @NotBlank(message = "La valeur est obligatoire")
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @NotBlank(message = "La valeur est obligatoire")
+    @Size(min = 8, message = "8 caractères requis")
     private String password;
 
-    private String gender;
-
+    @Email(message = "Email invalide")
     private String email;
+
+    @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$", message = "Votre numéro est invalide")
+    private String contact;
+
+    private String gender;
 
     private String[] roles;
 
@@ -41,14 +51,16 @@ public class Utilisateur implements Serializable{
     public Utilisateur() {
     }
 
-    public Utilisateur(Long id, String fullName, String username, String password, String gender, String email,
+    public Utilisateur(Long id, String fullName, String username,
+            String password,String email,String contact,String gender,
             String[] roles, Boolean activated, LocalDateTime added) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
         this.password = password;
-        this.gender = gender;
         this.email = email;
+        this.contact = contact;
+        this.gender = gender;
         this.roles = roles;
         this.activated = activated;
         this.added = added;
@@ -86,20 +98,28 @@ public class Utilisateur implements Serializable{
         this.password = password;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String[] getRoles() {
@@ -125,4 +145,5 @@ public class Utilisateur implements Serializable{
     public void setAdded(LocalDateTime added) {
         this.added = added;
     }
+
 }
