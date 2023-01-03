@@ -24,6 +24,7 @@ public class Utilisateur implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "La valeur est obligatoire")
     private String fullName;
 
     @NotBlank(message = "La valeur est obligatoire")
@@ -40,9 +41,10 @@ public class Utilisateur implements Serializable {
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$", message = "Votre numéro est invalide")
     private String contact;
 
-    private String gender;
-
+    @NotBlank(message = "La valeur est obligatoire")
     private String[] roles;
+
+    private String gender;
 
     private Boolean activated;
 
