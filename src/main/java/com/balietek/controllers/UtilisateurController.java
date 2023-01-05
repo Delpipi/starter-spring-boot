@@ -1,5 +1,7 @@
 package com.balietek.controllers;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ public class UtilisateurController {
 
     @GetMapping()
     public ResponseEntity<?> getAllUtilisateurs() {
+        logger.info("Get All Utilisteur");
         return ResponseEntity.ok(myUserService.getAllUtilisateurs());
     }
 
@@ -48,6 +51,18 @@ public class UtilisateurController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    // @GetMapping(value="/savetest")
+    // public ResponseEntity<?> savetest() {
+    //     Utilisateur utilisateur = new Utilisateur(null, "Kouame Alexandre Paul", "Delpipi",
+    //      "123456", "alexandrepaulkouame@gmail.com", "+2250504888547", "M", new String[] {"ROLE_ADMIN"}, true, LocalDateTime.now());
+    //     logger.info("Utlisateur : " + utilisateur.toString());
+    //      try {
+    //         return ResponseEntity.ok(myUserService.saveUtilisateur(utilisateur));
+    //     } catch (Exception e) {
+    //         return ResponseEntity.internalServerError().body(e.getMessage());
+    //     }
+    // }
 
     @PostMapping(value = "register")
     public ResponseEntity<?> saveUtilisateur(@Valid  @RequestBody Utilisateur utilisateur) {

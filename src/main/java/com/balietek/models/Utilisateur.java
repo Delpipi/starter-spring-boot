@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -57,7 +58,6 @@ public class Utilisateur implements Serializable {
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$", message = "Votre numéro est invalide")
     private String contact;
   
-    @NotBlank(message = "La valeur est obligatoire")
     @Type(StringArrayType.class)
     @Column(columnDefinition = "text[]")
     private String[] roles;
@@ -66,8 +66,8 @@ public class Utilisateur implements Serializable {
 
     private Boolean activated;
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime added;
 
@@ -169,4 +169,12 @@ public class Utilisateur implements Serializable {
         this.added = added;
     }
 
+    @Override
+    public String toString() {
+        return "Utilisateur [id=" + id + ", fullName=" + fullName + ", username=" + username + ", password=" + password
+                + ", email=" + email + ", contact=" + contact + ", roles=" + Arrays.toString(roles) + ", gender="
+                + gender + ", activated=" + activated + ", added=" + added + "]";
+    }
+
+    
 }
