@@ -1,14 +1,14 @@
 package com.balietek.controllers;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.balietek.exceptions.ResourceNoFoundException;
-import com.balietek.exceptions.UserAlreadyExistException;
+import com.balietek.models.AuthenticationRequest;
+import com.balietek.models.AuthenticationResponse;
 import com.balietek.models.Utilisateur;
 import com.balietek.services.MyUserDetails;
 import com.balietek.services.MyUserService;
+import com.balietek.utils.JwtTokenUtil;
 
 import jakarta.validation.Valid;
 
@@ -35,6 +37,12 @@ public class UtilisateurController {
 
     @Autowired
     private MyUserService myUserService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
 
     @GetMapping()
@@ -74,23 +82,29 @@ public class UtilisateurController {
         }
     }
 
-    // @PostMapping(value = "authenticate")
-    // public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
-    //     logger.info("Authentication Request info:" + authenticationRequest.toString());
-    //     try {
-    //         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+    @PostMapping(value = "authenticate")
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+        logger.info("Authentication Request info:" + authenticationRequest.toString());
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
-    //         SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    //         MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+            MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
 
-    //         final String jwt = jwtTokenUtil.generateToken(myUserDetails);
+            final String jwt = jwtTokenUtil.generateToken(myUserDetails);
             
-    //         return ResponseEntity.ok(new AuthenticationResponse(jwt, myUserDetails.getUtilisateur()));
-    //     } catch (BadCredentialsException e) {
-    //         return ResponseEntity.internalServerError().body("Erreur");
-    //     }
-    // }
+            return ResponseEntity.ok(new AuthenticationResponse(jwt, myUserDetails.getUtilisateur()));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.internalServerError().body("Nom utilisateur / Mot de passe incorrecte ou Compte inexistant");
+        } catch(DisabledException e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Echec de la connection.Veuillez réessayer");
+        }
+    }
 
     @PutMapping(value="{id}")
     public ResponseEntity<?> updateUtilisateur(@PathVariable("id") Long id, @Valid  @RequestBody Utilisateur utilisateur) {

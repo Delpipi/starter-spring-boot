@@ -1,21 +1,14 @@
 package com.balietek.models;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.balietek.utils.LocalDateTimeConverter;
-import com.balietek.utils.LocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.Column;
