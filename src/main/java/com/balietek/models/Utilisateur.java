@@ -1,9 +1,24 @@
 package com.balietek.models;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
+import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.balietek.utils.LocalDateTimeConverter;
+import com.balietek.utils.LocalDateTimeSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +28,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
 
 @Entity(name = "utilisateur")
 @Table(name = "utilisateur")
@@ -40,14 +56,19 @@ public class Utilisateur implements Serializable {
 
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$", message = "Votre numéro est invalide")
     private String contact;
-
+  
     @NotBlank(message = "La valeur est obligatoire")
+    @Type(StringArrayType.class)
+    @Column(columnDefinition = "text[]")
     private String[] roles;
 
     private String gender;
 
     private Boolean activated;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime added;
 
     public Utilisateur() {
